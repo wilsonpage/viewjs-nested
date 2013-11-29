@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Example 1</title>
+</head>
+<body>
+  <script src="view.js"></script>
+  <script src="../../index.js"></script>
+  <script>
+
+    var Foo = View.extend({
+      render: function() {
+        return this.el.innerHTML = this.template
+      },
+      template: function() {
+        return '<h2>foo</h2><div>' + this.children.slot1.template() + '</div>'
+      }
+    });
+
+    var Bar = View.extend({
+
+      setup: function() {
+        this.children.forEach('setup');
+      },
+      template: function() {
+        return '<h2>bar</h2><div>' + this.children.slot1.template() + '</div>'
+      }
+    });
+
+    var Baz = View.extend({
+      template: function() {
+        return '<h2>baz</h2>'
+      }
+    });
+
+    //Layout.register('foo', Foo);
+    //Layout.register('bar', Bar);
+    //Layout.register('baz', Baz);
+    //
+
+
+
+    var foo = new Foo();
+    var bar = new Bar();
+    var baz = new Baz();
+
+    foo.children = { slot1: bar };
+    bar.children = { slot1: baz };
+    baz.children = {};
+
+    document.body.innerHTML = foo.template();
+
+
+
+    // var layout = new Layout({
+    //   module: Foo,
+    //   children: {
+    //     slot1: {
+    //       module: Bar,
+    //       children: {
+    //         slot1: {
+    //           module: Baz
+    //         }
+    //       }
+    //     }
+    //   }
+    // });
+
+
+    // layout
+    //   .template()
+    //   .appendTo()
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "view-children-example",
+  "version": "0.0.0",
+  "authors": [
+    "Wilson Page <wilsonpage@me.com>"
+  ],
+  "main": "index.html",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "view": "../../../view/"
+  }
+}

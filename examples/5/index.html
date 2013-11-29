@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Example 1</title>
+</head>
+<body>
+  <script src="bower_components/requirejs/require.js"></script>
+  <script>
+    requirejs.config({
+      paths: {
+        'view': '/Users/wilsonpage/Dropbox/Documents/v/view/index',
+        'event': '/Users/wilsonpage/Dropbox/Documents/e/event/index'
+      }
+    });
+
+    require([
+      'lib/foo',
+      'lib/bar'
+    ], function(Foo, Bar) {
+
+      document.onclick = function() {
+        var root = window.root = new Foo();
+
+
+        for (var i = 0, l = 1000; i < l; i++) {
+          var bar = new Bar();
+          root.add(bar);
+        }
+
+
+
+
+
+
+
+        root.children[0].add(new Bar());
+
+        root.children[0].children[0].on('thingy', function(arg) {
+          console.log(arg);
+        });
+
+        root
+          .render()
+          .appendTo(document.body);
+
+
+ console.time('children');
+        root.broadcast('thingy', 'wee');
+
+         console.timeEnd('children');
+
+      };
+    });
+  </script>
+</body>
+</html>

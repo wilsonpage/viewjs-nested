@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Example 1</title>
+</head>
+<body>
+  <script src="view.js"></script>
+  <script src="layout.js"></script>
+  <script>
+    var Views = {};
+
+    Views.foo = View.extend({
+      name: 'foo',
+      render: function(children) {
+        var slot1 = children.slot1.el.outerHTML;
+        this.el.innerHTML = this.template({ slot1: slot1 })
+      },
+      template: function(data) {
+        return '<h2>foo</h2><div>' + data.slot1 + '</div>'
+      }
+    });
+
+    Views.bar = View.extend({
+      name: 'bar',
+      callbacks: {
+        inserted: function() {},
+        removed: function() {}
+      },
+      render: function() {
+        this.el.innerHTML = this.template();
+      },
+      template: function() {
+        return '<h2>bar</h2>';
+      }
+    });
+
+
+    var layout = new Layout({
+      module: 'foo',
+      children: {
+        slot1: {
+          module: 'bar'
+        }
+      }
+    });
+
+    layout
+      .render()
+      .appendTo(document.body);
+
+
+  </script>
+</body>
+</html>

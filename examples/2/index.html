@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Example 1</title>
+</head>
+<body>
+  <script src="view.js"></script>
+  <script src="../../index.js"></script>
+  <script>
+
+    var Foo = View.extend({
+      name: 'foo',
+      ready: function() {
+        console.log(this.el);
+      },
+      template: function() {
+        var slot1 = this.children.slot1.toHTML();
+        return '<h2>foo</h2><div>' + slot1 + '</div>'
+      }
+    });
+
+    var Bar = View.extend({
+      name: 'bar',
+      ready: function() {
+        console.log(this.el);
+      },
+      template: function() {
+        return '<h2>bar</h2>';
+      }
+    });
+
+    //Layout.register('foo', Foo);
+    //Layout.register('bar', Bar);
+    //Layout.register('baz', Baz);
+    //
+
+
+
+    var foo = new Foo();
+    var bar = new Bar();
+
+
+    foo.children = { slot1: bar };
+    bar.children = {};
+
+    document.body.appendChild(foo.el);
+
+    foo.render();
+
+
+
+    // var layout = new Layout({
+    //   module: Foo,
+    //   children: {
+    //     slot1: {
+    //       module: Bar,
+    //       children: {
+    //         slot1: {
+    //           module: Baz
+    //         }
+    //       }
+    //     }
+    //   }
+    // });
+
+
+    // layout
+    //   .template()
+    //   .appendTo()
+
+  </script>
+</body>
+</html>
