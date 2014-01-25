@@ -1,4 +1,7 @@
 
+var assert = chai.assert;
+
 beforeEach(function() {
-  View.prototype.plugins = [];
+  view.Base.prototype.plugins = [];
+  view.plugin(window['viewjs-nested']);
 });

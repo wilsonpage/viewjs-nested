@@ -7,9 +7,8 @@
 
 var slice = [].slice;
 
-
-function plugin(view) {
-  view.children = [];
+function plugin(view, options) {
+  view.nested = [];
 
   // Reference originals
   view._render = view.render;
@@ -17,34 +16,37 @@ function plugin(view) {
   view._destroy = view.destroy;
   view._fire = view.fire;
 
-  // Add new methods
-  view.fire = methods.bubbleFire;
-  view.broadcast = methods.broadcast;
-  view.findReplaceElement = methods.findReplaceElement;
-  view.render = methods.render;
-  view.remove = methods.remove;
-  view.destroy = methods.destroy;
-  view.add = methods.add;
-  view.deepCall = methods.deepCall;
+  view.slot = options.slot;
+  view.root = view;
+  view.mixin(methods);
+  each(options.nested || [], view.add, view);
 }
 
 
 var methods = {
-  bubbleFire: function(name) {
+  fire: function(name) {
     var args = arguments;
     var parent = this.parent;
 
     // Fire on Self
     this._fire.apply(this, arguments);
 
-    // Don't propagate
-    // 'core' events
+    // Special cases:
     switch (name) {
-      case 'before initialize':
-      case 'initialize':
-      case 'destroy':
+
+      // When a view tree is inserted
+      // or removed from the DOM, descendents
+      // must fire event hooks too.
+      case 'insert':
       case 'remove':
-      case 'inserted':
+      case 'before insert':
+      case 'before remove':
+        return this.broadcast(name);
+
+      // Shouldn't be propagated
+      case 'add':
+      case 'destroy':
+      case 'before add':
         return;
     }
 
@@ -69,7 +71,7 @@ var methods = {
     // and recurse from the top down.
     if (isRenderRoot) {
       this.deepCall({
-        fn: 'findReplaceElement',
+        method: 'findReplaceElement',
         args: [this.el]
       });
     }
@@ -89,15 +91,31 @@ var methods = {
   },
 
   add: function(child, slot) {
-    this.children.push(child);
-    this.children[child.name] = child;
+    this.fire('before add', child, slot);
+    this.nested.push(child);
+    this.nested[child.name] = child;
+    slot = child.slot || slot;
 
     if (slot) {
       child.slot = slot;
-      this.children[slot] = child;
+      this.nested[slot] = child;
     }
 
     child.parent = this;
+    child.root = this.root;
+
+    // Update the root on
+    // all nested children
+    if (child.nested) {
+      child.deepCall({
+        method: this.setRoot,
+        args: [this.root],
+        skipSelf: true
+      });
+    }
+
+    this.fire('add', child, slot);
+    return this;
   },
 
   remove: function(child) {
@@ -111,38 +129,43 @@ var methods = {
     var parent = this.parent;
 
     if (parent) {
-      var index = parent.children.indexOf(this);
-      var nameRef = parent.children[this.name];
-      var slotRef = parent.children[this.slot];
-      var children = parent.children;
+      var index = parent.nested.indexOf(this);
+      var nameRef = parent.nested[this.name];
+      var slotRef = parent.nested[this.slot];
+      var nested = parent.nested;
 
       // Array element
       if (~index) {
-        children.splice(index, 1);
+        nested.splice(index, 1);
       }
 
       // Name reference
       if (nameRef && nameRef === this) {
-        delete children[this.name];
+        delete nested[this.name];
       }
 
       // Slot reference
       if (slotRef && slotRef === this) {
-        delete children[this.slot];
+        delete nested[this.slot];
       }
 
       // Parent reference
       delete this.parent;
     }
 
+    // Update the root
+    this.deepCall({
+      method: this.setRoot,
+      args: [this]
+    });
+
     // Call original
-    this._remove({ silent: true });
-    this.broadcast('remove');
+    this._remove();
   },
 
   destroy: function() {
     this.deepCall({
-      fn: '_destroy',
+      method: '_destroy',
       fromBottom: true,
       skipSelf: true,
       args: [{ noRemove: true }]
@@ -152,13 +175,16 @@ var methods = {
   },
 
   deepCall: function(options) {
-    var fn = this[options.fn];
     var fromBottom = options.fromBottom;
     var skipSelf = options.skipSelf;
     var self = this;
 
+    var method = typeof options.method === 'string'
+      ? this[options.method]
+      : options.method;
+
     function call() {
-      fn.apply(self, options.args);
+      method.apply(self, options.args);
     }
 
     // Clear to prevent skipping
@@ -166,23 +192,32 @@ var methods = {
 
     // Depending on whether
     if (!skipSelf && !fromBottom) call();
-    this.children.forEach(callOn('deepCall', [options]));
+    this.nested.forEach(callOn('deepCall', [options]));
     if (!skipSelf && fromBottom) call();
+  },
+
+  setRoot: function(root) {
+    this.root = root;
   },
 
   broadcast: function() {
     this.deepCall({
-      fn: '_fire',
+      method: '_fire',
+      skipSelf: true,
       args: arguments
     });
   }
 };
 
-function callOn(fn, args) {
+function callOn(method, args) {
   return function(obj) {
-    fn = (typeof fn === 'string') ? obj[fn] : fn;
-    return fn.apply(obj, args);
+    method = (typeof method === 'string') ? obj[method] : method;
+    if (method) return method.apply(obj, args);
   };
+}
+
+function each(ob, fn, ctx) {
+  for (var key in ob) fn.call(ctx, ob[key], key);
 }
 
 /**
@@ -194,7 +229,7 @@ if (typeof exports === 'object') {
 } else if (typeof define === 'function' && define.amd) {
   define(function(){ return plugin; });
 } else {
-  window['ViewChildren'] = plugin;
+  window['viewjs-nested'] = plugin;
 }
 
 })();

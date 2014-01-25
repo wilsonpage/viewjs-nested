@@ -1,11 +1,9 @@
 
 suite('View#broadcast()', function() {
 
-	test('Should fire event on all decendents', function() {
-    View.prototype.plugins.push(ViewChildren);
-
+  test('Should fire event on all decendents', function() {
     var callback = sinon.spy();
-    var Foo = View.extend({});
+    var Foo = view.define({});
     var parent = new Foo();
     var child1 = new Foo();
     var child2 = new Foo();
@@ -18,7 +16,7 @@ suite('View#broadcast()', function() {
     child2.on('test', callback);
     parent.broadcast('test');
 
-    assert(callback.calledThrice);
+    assert(callback.calledTwice, 'callback not called 3 times');
   });
 
 });

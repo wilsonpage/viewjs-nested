@@ -15,15 +15,9 @@
   <script src="../node_modules/sinon/lib/sinon/spy.js"></script>
   <script src="../node_modules/sinon/lib/sinon/stub.js"></script>
   <script>mocha.setup('tdd')</script>
-  <script src="/Users/wilsonpage/Dropbox/Documents/e/event/index.js"></script>
-  <script src="/Users/wilsonpage/Dropbox/Documents/v/view/index.js"></script>
+  <script src="../bower_components/evt/index.js"></script>
+  <script src="../bower_components/viewjs/index.js"></script>
   <script src="../index.js"></script>
-  <script>
-    // Alias chai.assert
-    var assert = chai.assert;
-    var View = window.view;
-    var ViewChildren = window.ViewChildren;
-  </script>
   <script src="beforeEach.js"></script>
   <script src="test.js"></script>
   <script src="test-view-add.js"></script>
@@ -32,6 +26,7 @@
   <script src="test-view-render.js"></script>
   <script src="test-view-fire.js"></script>
   <script src="test-view-broadcast.js"></script>
+  <script src="test-view-root.js"></script>
   <script>
     mocha.checkLeaks();
     if (window.mochaPhantomJS) mochaPhantomJS.run();

@@ -2,9 +2,7 @@
 suite('View#destroy()', function() {
 
 	test('Should call original destroy method on each descendent', function() {
-		View.prototype.plugins.push(ViewChildren);
-
-    var Foo = View.extend({});
+    var Foo = view.define({});
 		var parent = new Foo();
     var child1 = new Foo();
     var child2 = new Foo();
@@ -23,9 +21,7 @@ suite('View#destroy()', function() {
 	});
 
   test('Should call remove on the root callee only', function() {
-    View.prototype.plugins.push(ViewChildren);
-
-    var Foo = View.extend({});
+    var Foo = view.define({});
     var parent = new Foo();
     var child1 = new Foo();
     var child2 = new Foo();

@@ -2,11 +2,11 @@
 suite('View#render()', function() {
 
   // Demo View class
-  var Foo = View.extend({
+  var Foo = view.define({
     name: 'foo',
     render: function() {
-      var child = this.children[0];
-      var html = child && child.render().el.outerHTML || '';
+      var child = this.nested[0];
+      var html = child && child.render().toHTML() || '';
       this.el.innerHTML = this.template(html);
       return this;
     },
@@ -16,8 +16,6 @@ suite('View#render()', function() {
   });
 
 	test('Should contain the child elements after a deep render', function() {
-		View.prototype.plugins.push(ViewChildren);
-
 		var parent = new Foo();
     var child1 = new Foo();
     var child2 = new Foo();
@@ -34,8 +32,6 @@ suite('View#render()', function() {
 	});
 
   test('Should initiate the replacing of child element from the render root', function() {
-    View.prototype.plugins.push(ViewChildren);
-
     var parent = new Foo();
     var child1 = new Foo();
     var child2 = new Foo();

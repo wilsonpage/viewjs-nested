@@ -1,0 +1,19 @@
+{
+  "name": "viewjs-nested",
+  "main": "index.js",
+  "version": "0.0.0",
+  "authors": [
+    "Wilson Page <wilsonpage@me.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "viewjs": "*"
+  }
+}

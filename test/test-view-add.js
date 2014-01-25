@@ -1,52 +1,38 @@
 
-
 suite('View#add()', function() {
-
 	test('Should add view to the children array', function() {
-		View.prototype.plugins.push(ViewChildren);
-
-		var Foo = View.extend({});
+		var Foo = view.define({});
 		var parent = new Foo();
     var child = new Foo();
 
     parent.add(child);
-
-		assert(parent.children.indexOf(child) > -1);
+		assert(parent.nested.indexOf(child) > -1);
 	});
 
   test('Should add a reference by name to children array/object', function() {
-    View.prototype.plugins.push(ViewChildren);
-
-    var Foo = View.extend({ name: 'foo' });
+    var Foo = view.define({ name: 'foo' });
     var parent = new Foo();
     var child = new Foo();
 
     parent.add(child);
-
-    assert(parent.children.foo);
+    assert(parent.nested.foo);
   });
 
   test('Should add a reference by slot if given', function() {
-    View.prototype.plugins.push(ViewChildren);
-
-    var Foo = View.extend({ name: 'foo' });
+    var Foo = view.define({ name: 'foo' });
     var parent = new Foo();
     var child = new Foo();
 
     parent.add(child, 'slotname');
-
-    assert(parent.children.slotname);
+    assert(parent.nested.slotname);
   });
 
   test('Should add a reference to the parent view', function() {
-    View.prototype.plugins.push(ViewChildren);
-
-    var Foo = View.extend({});
+    var Foo = view.define({});
     var parent = new Foo();
     var child = new Foo();
 
     parent.add(child);
-
     assert(child.parent === parent);
   });
 });
