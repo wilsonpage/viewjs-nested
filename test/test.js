@@ -31,8 +31,8 @@ suite('ViewNested()', function() {
     });
 
     assert(foo2.nested.length === 2);
-    assert(foo2.nested.barId1 === bar1);
-    assert(foo2.nested.barId2 === bar2);
+    assert(foo2.nested.slots.barId1 === bar1);
+    assert(foo2.nested.slots.barId2 === bar2);
   });
 
 });

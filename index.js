@@ -1,4 +1,5 @@
-(function() {
+umd(function(define) {
+define(function(require, exports, module) {
 'use strict';
 
 /**
@@ -7,8 +8,10 @@
 
 var slice = [].slice;
 
-function plugin(view, options) {
+module.exports = function (view, options) {
   view.nested = [];
+  view.nested.names = {};
+  view.nested.slots = {};
 
   // Reference originals
   view._render = view.render;
@@ -16,12 +19,13 @@ function plugin(view, options) {
   view._destroy = view.destroy;
   view._fire = view.fire;
 
-  view.slot = options.slot;
   view.root = view;
+  if (options.slot) view.slot = options.slot;
   view.mixin(methods);
-  each(options.nested || [], view.add, view);
-}
 
+  // Add children passed in options.nested
+  each(options.nested || [], view.add, view);
+};
 
 var methods = {
   fire: function(name) {
@@ -51,9 +55,7 @@ var methods = {
     }
 
     // Then fire on parent
-    if (parent) {
-      parent.fire.apply(parent, args);
-    }
+    if (parent) parent.fire.apply(parent, args);
   },
 
   render: function() {
@@ -96,9 +98,12 @@ var methods = {
     this.nested[child.name] = child;
     slot = child.slot || slot;
 
+    // Name reference
+    this.nested.names[child.name] = child;
+
     if (slot) {
       child.slot = slot;
-      this.nested[slot] = child;
+      this.nested.slots[slot] = child;
     }
 
     child.parent = this;
@@ -130,8 +135,6 @@ var methods = {
 
     if (parent) {
       var index = parent.nested.indexOf(this);
-      var nameRef = parent.nested[this.name];
-      var slotRef = parent.nested[this.slot];
       var nested = parent.nested;
 
       // Array element
@@ -139,17 +142,9 @@ var methods = {
         nested.splice(index, 1);
       }
 
-      // Name reference
-      if (nameRef && nameRef === this) {
-        delete nested[this.name];
-      }
-
-      // Slot reference
-      if (slotRef && slotRef === this) {
-        delete nested[this.slot];
-      }
-
-      // Parent reference
+      // Delete references
+      delete nested.names[this.name];
+      delete nested.slots[this.slot];
       delete this.parent;
     }
 
@@ -220,16 +215,7 @@ function each(ob, fn, ctx) {
   for (var key in ob) fn.call(ctx, ob[key], key);
 }
 
-/**
- * Expose 'ViewChildren' (UMD)
- */
-
-if (typeof exports === 'object') {
-  module.exports = plugin;
-} else if (typeof define === 'function' && define.amd) {
-  define(function(){ return plugin; });
-} else {
-  window['viewjs-nested'] = plugin;
-}
-
-})();
+});},'viewjs-nested');function umd(fn,n){
+if(typeof define=='function')return fn(define);
+if(typeof module=='object')return fn(function(c){c(require,exports,module);});
+var m={exports:{}},r=function(n){return window[n];};fn(function(c){window[n]=c(r,m.exports,m)||m.exports;});}

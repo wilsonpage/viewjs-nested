@@ -24,7 +24,7 @@ suite('View#add()', function() {
     var child = new Foo();
 
     parent.add(child, 'slotname');
-    assert(parent.nested.slotname);
+    assert(parent.nested.slots.slotname);
   });
 
   test('Should add a reference to the parent view', function() {

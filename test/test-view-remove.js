@@ -43,15 +43,15 @@ suite('View#remove()', function() {
     var parent = new Foo();
     var child = new Foo();
 
-    parent.add(child, 'slot');
+    parent.add(child, 'slotid');
 
-    assert(parent.nested.slot);
-    assert(parent.nested.foo);
+    assert(parent.nested.slots.slotid);
+    assert(parent.nested.names.foo);
 
     parent.remove(child);
 
-    assert(!parent.nested.slot);
-    assert(!parent.nested.foo);
+    assert(!parent.nested.slots.slotid);
+    assert(!parent.nested.names.foo);
   });
 
   test('Should be removed from the DOM', function() {
