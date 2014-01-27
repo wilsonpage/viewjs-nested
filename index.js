@@ -3,27 +3,50 @@ define(function(require, exports, module) {
 'use strict';
 
 /**
+ * Module Dependencies
+ */
+
+var viewjs = require('viewjs');
+
+/**
  * Locals
  */
 
 var slice = [].slice;
+var hasDocument = typeof document === 'object';
 
+/**
+ * Install nested funcitonality.
+ *
+ * options:
+ *
+ *   - `nested` {Array|Object|String} Child view instances to add
+ *
+ * @param  {View} view
+ * @param  {Object} options
+ * @public
+ */
 module.exports = function (view, options) {
   view.nested = [];
   view.nested.names = {};
   view.nested.slots = {};
 
   // Reference originals
-  view._render = view.render;
   view._remove = view.remove;
   view._destroy = view.destroy;
   view._fire = view.fire;
 
   view.root = view;
-  if (options.slot) view.slot = options.slot;
   view.mixin(methods);
 
-  // Add children passed in options.nested
+  if (typeof options.nested === 'string') {
+    options.nested = options.nested.split(' ')
+      .map(document.getElementById, document)
+      .map(viewjs);
+  }
+
+  // Handle options
+  if (options.slot) view.slot = options.slot;
   each(options.nested || [], view.add, view);
 };
 
@@ -50,7 +73,9 @@ var methods = {
       // Shouldn't be propagated
       case 'add':
       case 'destroy':
+      case 'render':
       case 'before add':
+      case 'before render':
         return;
     }
 
@@ -59,40 +84,28 @@ var methods = {
   },
 
   render: function() {
-    var isRenderRoot = (!this.parent || !this.parent.rendering);
-    var returnValue;
-
-    this.rendering = true;
-    returnValue = this._render();
-    this.rendering = false;
-
-    // Once the render call has completed
-    // we must replace the child view nodes
-    // with the original child.el nodes.
-    // This must be run from the root callee
-    // and recurse from the top down.
-    if (isRenderRoot) {
-      this.deepCall({
-        method: 'findReplaceElement',
-        args: [this.el]
-      });
-    }
-
-    // Be sure the return what
-    // the original returned.
-    return returnValue;
+    this.fire('before render');
+    var out = this._render();
+    this.nested.forEach(this.replacePlaceholder, this);
+    this.fire('render');
+    return out || this;
   },
 
-  findReplaceElement: function(root) {
-    var id = this.el.id;
-    var el = root.querySelector('#' + id);
+  replacePlaceholder: function(child) {
+    var el = this.el.querySelector('#' + child.el.id);
+    if (el) el.parentNode.replaceChild(child.el, el);
+  },
 
-    // Replace the placeholder element
-    // with the cononical view element.
-    if (el) el.parentNode.replaceChild(this.el, el);
+  // TODO: Don't know if this should overwrite
+  // the default .html() and .toHTML() methods?
+  placeholder: function() {
+    return hasDocument
+      ? '<span id="' + this.el.id + '"></span>'
+      : this.el.outerHTML;
   },
 
   add: function(child, slot) {
+    if (!child) return this;
     this.fire('before add', child, slot);
     this.nested.push(child);
     this.nested[child.name] = child;

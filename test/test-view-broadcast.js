@@ -3,7 +3,7 @@ suite('View#broadcast()', function() {
 
   test('Should fire event on all decendents', function() {
     var callback = sinon.spy();
-    var Foo = view.define({});
+    var Foo = viewjs.define({});
     var parent = new Foo();
     var child1 = new Foo();
     var child2 = new Foo();

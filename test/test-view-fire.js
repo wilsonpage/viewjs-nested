@@ -3,7 +3,7 @@ suite('View#fire()', function() {
 
   test('Should bubble fire events up the view chain', function() {
     var callback = sinon.spy();
-    var Foo = view.define({});
+    var Foo = viewjs.define({});
     var parent = new Foo();
     var child1 = new Foo();
     var child2 = new Foo();
@@ -19,7 +19,7 @@ suite('View#fire()', function() {
 
   test('Should not propagate core events to avoid confusion', function() {
     var callback = sinon.spy();
-    var Foo = view.define({});
+    var Foo = viewjs.define({});
     var parent = new Foo();
     var child = new Foo();
 
@@ -38,7 +38,7 @@ suite('View#fire()', function() {
 
   test('Should broadcast some events down the tree', function() {
     var callback = sinon.spy();
-    var Foo = view.define({});
+    var Foo = viewjs.define({});
     var parent = new Foo();
     var child = new Foo();
 

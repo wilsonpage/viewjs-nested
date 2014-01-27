@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>view-custom-element</title>
+</head>
+<body>
+  <script src="../bower_components/evt/index.js"></script>
+  <script src="../bower_components/viewjs/index.js"></script>
+  <script src="../bower_components/viewjs-nested/index.js"></script>
+  <script src="../index.js"></script>
+  <script>
+
+    // Install the plugin
+    viewjs.install(window['viewjs-nested']);
+
+    var Parent = viewjs.define({
+      name: 'parent',
+      template: function() {
+        var slots = this.nested.slots;
+        var slot1 = slots.slot1.render().placeholder();
+        var slot2 = slots.slot2.render().placeholder();
+        return 'name: ' + this.name + '<br/>' + slot1 + slot2;
+      }
+    });
+
+    var Child = viewjs.define({
+      name: 'child',
+      template: function() {
+        return 'I\'m a child';
+      }
+    });
+
+    var parent = new Parent();
+    var child1 = new Child();
+    var child2 = new Child();
+
+    parent.add(child1, 'slot1');
+    parent.add(child2, 'slot2');
+
+    parent.render();
+    parent.appendTo(document.body);
+  </script>
+</body>
+</html>

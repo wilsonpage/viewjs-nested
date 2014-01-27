@@ -2,7 +2,7 @@
 suite('View#remove()', function() {
 
   test('Should remove self if no arguments given', function() {
-    var Foo = view.define({});
+    var Foo = viewjs.define({});
     var parent = new Foo();
     var child = new Foo();
 
@@ -14,7 +14,7 @@ suite('View#remove()', function() {
   });
 
   test('Should clear reference to the parent view', function() {
-    var Foo = view.define({});
+    var Foo = viewjs.define({});
     var parent = new Foo();
     var child = new Foo();
 
@@ -25,7 +25,7 @@ suite('View#remove()', function() {
   });
 
   test('Should remove the given child from the children array', function() {
-    var Foo = view.define({});
+    var Foo = viewjs.define({});
     var parent = new Foo();
     var child1 = new Foo();
     var child2 = new Foo();
@@ -39,7 +39,7 @@ suite('View#remove()', function() {
   });
 
   test('Should clear any slot or name references on the children array/object', function() {
-    var Foo = view.define({ name: 'foo' });
+    var Foo = viewjs.define({ name: 'foo' });
     var parent = new Foo();
     var child = new Foo();
 
@@ -55,7 +55,7 @@ suite('View#remove()', function() {
   });
 
   test('Should be removed from the DOM', function() {
-    var Foo = view.define({});
+    var Foo = viewjs.define({});
     var parent = new Foo();
     var child = new Foo();
 
@@ -67,7 +67,7 @@ suite('View#remove()', function() {
   });
 
   test('Should remove child views from the DOM', function() {
-    var Foo = view.define({});
+    var Foo = viewjs.define({});
     var parent = new Foo();
     var child = new Foo();
 
@@ -80,7 +80,7 @@ suite('View#remove()', function() {
 
   test('Should fire a \'remove\' event on each child view', function() {
     var callback = sinon.spy();
-    var Foo = view.define({});
+    var Foo = viewjs.define({});
     var parent = new Foo();
     var child = new Foo();
 

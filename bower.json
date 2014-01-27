@@ -15,5 +15,8 @@
   ],
   "devDependencies": {
     "viewjs": "*"
+  },
+  "dependencies": {
+    "viewjs": "*"
   }
 }

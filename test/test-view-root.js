@@ -1,14 +1,14 @@
 
-suite('view.root', function() {
+suite('viewjs.root', function() {
 
   test('Should initially be set to self', function() {
-    var Foo = view.define({});
+    var Foo = viewjs.define({});
     var foo = new Foo();
     assert(foo.root === foo);
   });
 
   test('Should equal the root view', function() {
-    var Foo = view.define({});
+    var Foo = viewjs.define({});
     var parent = new Foo();
     var child1 = new Foo();
     var child2 = new Foo();
@@ -22,15 +22,15 @@ suite('view.root', function() {
   });
 
   test('Should be a reference to self if self *is* the root', function() {
-    var Foo = view.define({});
+    var Foo = viewjs.define({});
     var foo = new Foo();
 
     assert(foo.root === foo);
   });
 
   test('Should update the root for all descendents when a tree is added', function() {
-    var Parent = view.define({ name: 'parent' });
-    var Child = view.define({ name: 'child' });
+    var Parent = viewjs.define({ name: 'parent' });
+    var Child = viewjs.define({ name: 'child' });
     var parent1 = new Parent();
     var parent2 = new Parent();
     var child1 = new Child();
@@ -52,8 +52,8 @@ suite('view.root', function() {
   });
 
   test('Should update the root for all descendents when a tree is removed', function() {
-    var Parent = view.define({ name: 'parent' });
-    var Child = view.define({ name: 'child' });
+    var Parent = viewjs.define({ name: 'parent' });
+    var Child = viewjs.define({ name: 'child' });
     var parent1 = new Parent();
     var parent2 = new Parent();
     var child1 = new Child();
