@@ -30,22 +30,22 @@ module.exports = function (view, options) {
   view.nested = [];
   view.nested.names = {};
   view.nested.slots = {};
-
-  // Reference originals
   view._remove = view.remove;
   view._destroy = view.destroy;
   view._fire = view.fire;
-
   view.root = view;
   view.mixin(methods);
 
+  // If a nested option string has been
+  // passed we search the document for the
+  // ids and instantate a new view for each el.
   if (typeof options.nested === 'string') {
     options.nested = options.nested.split(' ')
       .map(document.getElementById, document)
       .map(viewjs);
   }
 
-  // Handle options
+  if (!hasDocument) view.on('before render', view.addNestedAttrs);
   if (options.slot) view.slot = options.slot;
   each(options.nested || [], view.add, view);
 };
@@ -214,6 +214,12 @@ var methods = {
       skipSelf: true,
       args: arguments
     });
+  },
+
+  addNestedAttrs: function() {
+    var nested = this.nested.map(function(child) { return child.el.id; });
+    if (nested) this.el.setAttribute('nested', nested.join(' '));
+    if (this.slot) this.el.setAttribute('slot', this.slot);
   }
 };
 
